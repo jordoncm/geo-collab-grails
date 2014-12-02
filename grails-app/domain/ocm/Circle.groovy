@@ -3,7 +3,7 @@ package ocm
 import grails.rest.*
 
 /**
- *
+ * A circle geomtery.
  */
 @Resource(uri='/circle', formats=['json'])
 class Circle extends Geometry {
