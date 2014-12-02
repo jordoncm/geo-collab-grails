@@ -44,17 +44,13 @@ ocm.models.Geometry = Backbone.Model.extend({
     // detecting type.
     if(layer instanceof L.Marker) {
       model = ocm.models.Point.createFromLeaflet(layer, mapId);
-    }
-    if(layer instanceof L.Rectangle) {  // Extends L.Polygon.
+    } else if(layer instanceof L.Rectangle) {  // Extends L.Polygon.
       model = ocm.models.Rectangle.createFromLeaflet(layer, mapId);
-    }
-    if(layer instanceof L.Polygon) {  // Extends L.Polyline.
+    } else if(layer instanceof L.Polygon) {  // Extends L.Polyline.
       model = ocm.models.Polygon.createFromLeaflet(layer, mapId);
-    }
-    if(layer instanceof L.Polyline) {  // Extends L.Path.
+    } else if(layer instanceof L.Polyline) {  // Extends L.Path.
       model = ocm.models.Line.createFromLeaflet(layer, mapId);
-    }
-    if(layer instanceof L.Circle) {  // Extends L.Path.
+    } else if(layer instanceof L.Circle) {  // Extends L.Path.
       model = ocm.models.Circle.createFromLeaflet(layer, mapId);
     }
     return model;
