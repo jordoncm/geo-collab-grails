@@ -69,7 +69,7 @@ ocm.models.Circle = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/circle',
+  urlRoot: ocm.Urls.REST_CIRCLE,
 
   /**
    * @override
@@ -121,7 +121,7 @@ ocm.models.Line = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/line',
+  urlRoot: ocm.Urls.REST_LINE,
 
   /**
    * @override
@@ -180,7 +180,7 @@ ocm.models.Point = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/point',
+  urlRoot: ocm.Urls.REST_POINT,
 
   /**
    * @override
@@ -230,7 +230,7 @@ ocm.models.Polygon = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/polygon',
+  urlRoot: ocm.Urls.REST_POLYGON,
 
   /**
    * @override
@@ -289,7 +289,7 @@ ocm.models.Rectangle = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/rectangle',
+  urlRoot: ocm.Urls.REST_RECTANGLE,
 
   /**
    * @override
@@ -370,7 +370,7 @@ ocm.models.Map = Backbone.Model.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/map',
+  urlRoot: ocm.Urls.REST_MAP,
 
   /**
    * @override
@@ -393,7 +393,7 @@ ocm.models.MapCollection = Backbone.Collection.extend({
   /**
    * @override
    */
-  url: '/ocm/map',
+  url: ocm.Urls.REST_MAP,
 
   /**
    * @override
@@ -413,7 +413,7 @@ ocm.models.State = Backbone.Model.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/state',
+  urlRoot: ocm.Urls.REST_STATE,
 
   /**
    * @override
@@ -435,7 +435,7 @@ ocm.models.View = Backbone.Model.extend({
   /**
    * @override
    */
-  urlRoot: '/ocm/view',
+  urlRoot: ocm.Urls.REST_VIEW,
 
   /**
    * @override

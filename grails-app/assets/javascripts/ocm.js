@@ -17,7 +17,16 @@ ocm.URL_BASE = '/ocm/';
  *
  * @enum {string}
  */
-ocm.Urls = {};
+ocm.Urls = {
+  REST_CIRCLE: ocm.URL_BASE + 'circle',
+  REST_LINE: ocm.URL_BASE + 'line',
+  REST_POINT: ocm.URL_BASE + 'point',
+  REST_POLYGON: ocm.URL_BASE + 'polygon',
+  REST_RECTANGLE: ocm.URL_BASE + 'rectangle',
+  REST_MAP: ocm.URL_BASE + 'map',
+  REST_STATE: ocm.URL_BASE + 'state',
+  REST_VIEW: ocm.URL_BASE + 'view'
+};
 
 
 /**
