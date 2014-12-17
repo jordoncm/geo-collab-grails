@@ -69,7 +69,9 @@ ocm.models.Circle = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_CIRCLE,
+  urlRoot: function() {
+    return ocm.Urls.REST_CIRCLE;
+  },
 
   /**
    * @override
@@ -121,7 +123,9 @@ ocm.models.Line = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_LINE,
+  urlRoot: function() {
+    return ocm.Urls.REST_LINE;
+  },
 
   /**
    * @override
@@ -180,7 +184,9 @@ ocm.models.Point = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_POINT,
+  urlRoot: function() {
+    return ocm.Urls.REST_POINT;
+  },
 
   /**
    * @override
@@ -230,7 +236,9 @@ ocm.models.Polygon = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_POLYGON,
+  urlRoot: function() {
+    return ocm.Urls.REST_POLYGON;
+  },
 
   /**
    * @override
@@ -289,7 +297,9 @@ ocm.models.Rectangle = ocm.models.Geometry.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_RECTANGLE,
+  urlRoot: function() {
+    return ocm.Urls.REST_RECTANGLE;
+  },
 
   /**
    * @override
@@ -370,7 +380,9 @@ ocm.models.Map = Backbone.Model.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_MAP,
+  urlRoot: function() {
+    return ocm.Urls.REST_MAP;
+  },
 
   /**
    * @override
@@ -393,7 +405,9 @@ ocm.models.MapCollection = Backbone.Collection.extend({
   /**
    * @override
    */
-  url: ocm.Urls.REST_MAP,
+  url: function() {
+    return ocm.Urls.REST_MAP;
+  },
 
   /**
    * @override
@@ -413,7 +427,9 @@ ocm.models.State = Backbone.Model.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_STATE,
+  urlRoot: function() {
+    return ocm.Urls.REST_STATE;
+  },
 
   /**
    * @override
@@ -435,7 +451,9 @@ ocm.models.View = Backbone.Model.extend({
   /**
    * @override
    */
-  urlRoot: ocm.Urls.REST_VIEW,
+  urlRoot: function() {
+    return ocm.Urls.REST_VIEW;
+  },
 
   /**
    * @override
