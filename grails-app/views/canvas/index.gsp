@@ -18,6 +18,9 @@
       </div>
     </div>
     <div id="map"></div>
+    <script type="text/javascript">
+var URL_BASE = '${createLink(uri: "")}';
+    </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.0.0/js/bootcards.min.js"></script>

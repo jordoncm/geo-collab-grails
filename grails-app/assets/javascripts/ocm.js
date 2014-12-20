@@ -9,23 +9,34 @@ var ocm = ocm || {};
  *
  * @const {string}
  */
-ocm.URL_BASE = '/ocm/';
+ocm.URL_BASE = URL_BASE + '/';
 
 
 /**
- * The URLs for the application.
+ * The REST URLs for the application.
  *
  * @enum {string}
  */
-ocm.Urls = {
-  REST_CIRCLE: ocm.URL_BASE + 'circle',
-  REST_LINE: ocm.URL_BASE + 'line',
-  REST_POINT: ocm.URL_BASE + 'point',
-  REST_POLYGON: ocm.URL_BASE + 'polygon',
-  REST_RECTANGLE: ocm.URL_BASE + 'rectangle',
-  REST_MAP: ocm.URL_BASE + 'map',
-  REST_STATE: ocm.URL_BASE + 'state',
-  REST_VIEW: ocm.URL_BASE + 'view'
+ocm.RestUrls = {
+  CIRCLE: ocm.URL_BASE + 'circle',
+  LINE: ocm.URL_BASE + 'line',
+  POINT: ocm.URL_BASE + 'point',
+  POLYGON: ocm.URL_BASE + 'polygon',
+  RECTANGLE: ocm.URL_BASE + 'rectangle',
+  MAP: ocm.URL_BASE + 'map',
+  STATE: ocm.URL_BASE + 'state',
+  VIEW: ocm.URL_BASE + 'view'
+};
+
+
+/**
+ * The topic URLs for the socket communication.
+ *
+ * @enum {string}
+ */
+ocm.SocketUrls = {
+  CREATED: '/topics/created',
+  DELETED: '/topics/deleted'
 };
 
 
@@ -118,20 +129,57 @@ ocm.Router = Backbone.Router.extend({
   map: null,
 
   /**
+   * Setup the stomp client static property.
+   */
+  initialize: function() {
+    ocm.Router.SOCKET = Stomp.over(new SockJS(ocm.URL_BASE + '/stomp'));
+    // Connect and subscribe to channels.
+    ocm.Router.SOCKET.connect({}, function() {
+      ocm.Router.SOCKET.subscribe(ocm.SocketUrls.CREATED, function(message) {
+        console.log(JSON.parse(message.body));
+      });
+      ocm.Router.SOCKET.subscribe(ocm.SocketUrls.DELETED, function(message) {
+        console.log(JSON.parse(message.body));
+      });
+    });
+  },
+
+  /**
    * Route execution method for a map load.
    */
   loadMap: function(id) {
     if(!this.map || this.map.get('id') != id) {
-      var model = this.map = new ocm.models.Map({id: id});
-      model.fetch({
-        success: function() {
+      this.map = new ocm.models.Map({id: id});
+      this.map.fetch({
+        success: _.bind(function() {
           // Publish the new map model to notify views.
-          model.set(
+          this.map.set(
             'features',
-            ocm.featureArrayToGeometryCollection(model.get('features')));
-          Backbone.trigger(ocm.Topics.MAP_CHANGED, model);
-        }
+            ocm.featureArrayToGeometryCollection(this.map.get('features')));
+
+          this.listenTo(this.map.get('features'), 'destroy', function(model) {
+            ocm.Router.SOCKET.send(
+              ocm.SocketUrls.DELETED,
+              {},
+              JSON.stringify(_.omit(model.toJSON(), 'map')));
+          });
+          this.listenTo(this.map.get('features'), 'sync', function(model) {
+            ocm.Router.SOCKET.send(
+              ocm.SocketUrls.CREATED,
+              {},
+              JSON.stringify(_.omit(model.toJSON(), 'map')));
+          });
+
+          Backbone.trigger(ocm.Topics.MAP_CHANGED, this.map);
+        }, this)
       });
     }
   }
+}, {
+  /**
+   * The stomp client.
+   *
+   * @type {Stomp}
+   */
+  SOCKET: null
 });

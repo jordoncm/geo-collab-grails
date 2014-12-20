@@ -70,7 +70,7 @@ ocm.models.Circle = ocm.models.Geometry.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_CIRCLE;
+    return ocm.RestUrls.CIRCLE;
   },
 
   /**
@@ -124,7 +124,7 @@ ocm.models.Line = ocm.models.Geometry.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_LINE;
+    return ocm.RestUrls.LINE;
   },
 
   /**
@@ -185,7 +185,7 @@ ocm.models.Point = ocm.models.Geometry.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_POINT;
+    return ocm.RestUrls.POINT;
   },
 
   /**
@@ -211,7 +211,6 @@ ocm.models.Point = ocm.models.Geometry.extend({
    * @override
    */
   createFromLeaflet: function(layer, mapId) {
-    console.log(arguments);
     model = new ocm.models.Point({
       map: {id: mapId},  // Weak reference on the client side so database
                          // relationship sets up properly.
@@ -237,7 +236,7 @@ ocm.models.Polygon = ocm.models.Geometry.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_POLYGON;
+    return ocm.RestUrls.POLYGON;
   },
 
   /**
@@ -298,7 +297,7 @@ ocm.models.Rectangle = ocm.models.Geometry.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_RECTANGLE;
+    return ocm.RestUrls.RECTANGLE;
   },
 
   /**
@@ -381,7 +380,7 @@ ocm.models.Map = Backbone.Model.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_MAP;
+    return ocm.RestUrls.MAP;
   },
 
   /**
@@ -406,7 +405,7 @@ ocm.models.MapCollection = Backbone.Collection.extend({
    * @override
    */
   url: function() {
-    return ocm.Urls.REST_MAP;
+    return ocm.RestUrls.MAP;
   },
 
   /**
@@ -428,7 +427,7 @@ ocm.models.State = Backbone.Model.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_STATE;
+    return ocm.RestUrls.STATE;
   },
 
   /**
@@ -452,7 +451,7 @@ ocm.models.View = Backbone.Model.extend({
    * @override
    */
   urlRoot: function() {
-    return ocm.Urls.REST_VIEW;
+    return ocm.RestUrls.VIEW;
   },
 
   /**
