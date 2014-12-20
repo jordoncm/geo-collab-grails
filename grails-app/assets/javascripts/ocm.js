@@ -129,19 +129,26 @@ ocm.Router = Backbone.Router.extend({
   map: null,
 
   /**
+   * The stomp client.
+   *
+   * @type {Stomp}
+   */
+  socket: null,
+
+  /**
    * Setup the stomp client static property.
    */
   initialize: function() {
-    ocm.Router.SOCKET = Stomp.over(new SockJS(ocm.URL_BASE + '/stomp'));
+    this.socket = Stomp.over(new SockJS(ocm.URL_BASE + '/stomp'));
     // Connect and subscribe to channels.
-    ocm.Router.SOCKET.connect({}, function() {
-      ocm.Router.SOCKET.subscribe(ocm.SocketUrls.CREATED, function(message) {
+    this.socket.connect({}, _.bind(function() {
+      this.socket.subscribe(ocm.SocketUrls.CREATED, function(message) {
         console.log(JSON.parse(message.body));
       });
-      ocm.Router.SOCKET.subscribe(ocm.SocketUrls.DELETED, function(message) {
+      this.socket.subscribe(ocm.SocketUrls.DELETED, function(message) {
         console.log(JSON.parse(message.body));
       });
-    });
+    }, this));
   },
 
   /**
@@ -158,13 +165,13 @@ ocm.Router = Backbone.Router.extend({
             ocm.featureArrayToGeometryCollection(this.map.get('features')));
 
           this.listenTo(this.map.get('features'), 'destroy', function(model) {
-            ocm.Router.SOCKET.send(
+            this.socket.send(
               ocm.SocketUrls.DELETED,
               {},
               JSON.stringify(_.omit(model.toJSON(), 'map')));
           });
           this.listenTo(this.map.get('features'), 'sync', function(model) {
-            ocm.Router.SOCKET.send(
+            this.socket.send(
               ocm.SocketUrls.CREATED,
               {},
               JSON.stringify(_.omit(model.toJSON(), 'map')));
@@ -175,11 +182,4 @@ ocm.Router = Backbone.Router.extend({
       });
     }
   }
-}, {
-  /**
-   * The stomp client.
-   *
-   * @type {Stomp}
-   */
-  SOCKET: null
 });
