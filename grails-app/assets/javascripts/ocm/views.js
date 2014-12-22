@@ -158,7 +158,15 @@ ocm.views.Map = Backbone.View.extend({
     this.featureGroup.clearLayers();
     // Render the features in the collection onto the map.
     map.get('features').each(_.bind(function(feature) {
-        this.featureGroup.addLayer(feature.toLeaflet());
+      this.featureGroup.addLayer(feature.toLeaflet());
+    }, this));
+
+    this.listenTo(map.get('features'), 'add', _.bind(function(feature) {
+      this.featureGroup.addLayer(feature.toLeaflet());
+    }, this));
+
+    this.listenTo(map.get('features'), 'remove', _.bind(function(feature) {
+      this.featureGroup.removeLayer(feature.toLeaflet());
     }, this));
 
     this.map = map;
@@ -191,9 +199,9 @@ ocm.views.Map = Backbone.View.extend({
       return feature.toLeaflet() == layer;
     });
     if(model) {
-      this.map.get('features').remove(model);
       // Let the server cascade deletions to save on HTTP requests.
       model.destroy();
+      this.map.get('features').remove(model);
     }
   },
 

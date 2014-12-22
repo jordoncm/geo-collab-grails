@@ -57,6 +57,25 @@ ocm.Topics = {
  * @return {ocm.models.GeometryCollection}
  */
 ocm.featureArrayToGeometryCollection = function(features) {
+  var geometryCollection = new ocm.models.GeometryCollection();
+  _.each(features, function(feature) {
+    var model = ocm.featureToGeometry(feature);
+    if(model) {
+      geometryCollection.add(model);
+    }
+  });
+
+  return geometryCollection;
+};
+
+
+/**
+ * Convert an object of feature data into a geometry model.
+ *
+ * @param {Object.<string, *>}
+ * @return {ocm.models.Geometry}
+ */
+ocm.featureToGeometry = function(feature) {
   var buildPointCollection = function(collection, points) {
     _.each(points, function(point) {
       collection.add(new ocm.models.Point({
@@ -69,38 +88,31 @@ ocm.featureArrayToGeometryCollection = function(features) {
     });
   };
 
-  var geometryCollection = new ocm.models.GeometryCollection();
-  _.each(features, function(feature) {
-    var model = null;
-    switch(feature.class) {
-      case 'ocm.Circle':
-        model = new ocm.models.Circle(feature);
-        break;
-      case 'ocm.Line':
-        model = new ocm.models.Line(feature);
-        model.set('points', new ocm.models.GeometryCollection());
-        buildPointCollection(model.get('points'), feature.points);
-        break;
-      case 'ocm.Point':
-        model = new ocm.models.Point(feature);
-        break;
-      case 'ocm.Polygon':
-        model = new ocm.models.Polygon(feature);
-        model.set('points', new ocm.models.GeometryCollection());
-        buildPointCollection(model.get('points'), feature.points);
-        break;
-      case 'ocm.Rectangle':
-        model = new ocm.models.Rectangle(feature);
-        model.set('points', new ocm.models.GeometryCollection());
-        buildPointCollection(model.get('points'), feature.points);
-        break;
-    }
-    if(model) {
-      geometryCollection.add(model);
-    }
-  });
-
-  return geometryCollection;
+  var model = null;
+  switch(feature.class) {
+    case 'ocm.Circle':
+      model = new ocm.models.Circle(feature);
+      break;
+    case 'ocm.Line':
+      model = new ocm.models.Line(feature);
+      model.set('points', new ocm.models.GeometryCollection());
+      buildPointCollection(model.get('points'), feature.points);
+      break;
+    case 'ocm.Point':
+      model = new ocm.models.Point(feature);
+      break;
+    case 'ocm.Polygon':
+      model = new ocm.models.Polygon(feature);
+      model.set('points', new ocm.models.GeometryCollection());
+      buildPointCollection(model.get('points'), feature.points);
+      break;
+    case 'ocm.Rectangle':
+      model = new ocm.models.Rectangle(feature);
+      model.set('points', new ocm.models.GeometryCollection());
+      buildPointCollection(model.get('points'), feature.points);
+      break;
+  }
+  return model;
 };
 
 
@@ -142,12 +154,17 @@ ocm.Router = Backbone.Router.extend({
     this.socket = Stomp.over(new SockJS(ocm.URL_BASE + '/stomp'));
     // Connect and subscribe to channels.
     this.socket.connect({}, _.bind(function() {
-      this.socket.subscribe(ocm.SocketUrls.CREATED, function(message) {
-        console.log(JSON.parse(message.body));
-      });
-      this.socket.subscribe(ocm.SocketUrls.DELETED, function(message) {
-        console.log(JSON.parse(message.body));
-      });
+      this.socket.subscribe(ocm.SocketUrls.CREATED, _.bind(function(message) {
+        var data = JSON.parse(message.body);
+        if(!this.map.get('features').get(data.id)) {
+          var model = ocm.featureToGeometry(data);
+          this.map.get('features').add(model);
+        }
+      }, this));
+      this.socket.subscribe(ocm.SocketUrls.DELETED, _.bind(function(message) {
+        var data = JSON.parse(message.body);
+        this.map.get('features').remove(this.map.get('features').get(data.id));
+      }, this));
     }, this));
   },
 
