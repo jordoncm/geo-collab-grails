@@ -36,7 +36,11 @@ ocm.RestUrls = {
  */
 ocm.SocketUrls = {
   CREATED: '/topics/created',
-  DELETED: '/topics/deleted'
+  DELETED: '/topics/deleted',
+  REGISTER: '/app/register',
+  REGISTER_ACK: '/topics/register-ack',
+  HEARTBEAT: '/app/heartbeat',
+  HEARTBEAT_ACK: '/topics/heartbeat-ack'
 };
 
 
@@ -148,6 +152,20 @@ ocm.Router = Backbone.Router.extend({
   socket: null,
 
   /**
+   * The id of the map editor.
+   *
+   * @type {number}
+   */
+  editorId: null,
+
+  /**
+   * Interval for maintaining heartbeat with server.
+   *
+   * @type {number}
+   */
+  interval: null,
+
+  /**
    * Setup the stomp client static property.
    */
   initialize: function() {
@@ -165,6 +183,30 @@ ocm.Router = Backbone.Router.extend({
         var data = JSON.parse(message.body);
         this.map.get('features').remove(this.map.get('features').get(data.id));
       }, this));
+
+      this.socket.subscribe(
+        ocm.SocketUrls.REGISTER_ACK,
+        _.bind(function(message) {
+          if(!this.editorId) {
+            var data = JSON.parse(message.body);
+            if(this.map && this.map.get('id') == data.map) {
+              this.editorId = data.id;
+            }
+          }
+        }, this));
+
+      this.socket.subscribe(
+        ocm.SocketUrls.HEARTBEAT_ACK,
+        _.bind(function(message) {
+          if(this.editorId) {
+            var data = JSON.parse(message.body);
+            if(this.editorId == data.id) {
+              if(this.map && this.map.get('id') == data.map) {
+                console.log(data);
+              }
+            }
+          }
+        }, this));
     }, this));
   },
 
@@ -193,6 +235,23 @@ ocm.Router = Backbone.Router.extend({
               {},
               JSON.stringify(_.omit(model.toJSON(), 'map')));
           });
+
+          if(this.interval) {
+            window.clearInterval(this.interval);
+          }
+          this.editorId = null;
+
+          this.socket.send(
+            ocm.SocketUrls.REGISTER,
+            {},
+            JSON.stringify(this.map.get('id')));
+
+          this.interval = window.setInterval(_.bind(function() {
+            this.socket.send(
+              ocm.SocketUrls.HEARTBEAT,
+              {},
+              JSON.stringify(JSON.stringify({id: this.editorId, mapId: this.map.get('id')})));
+          }, this), 500);
 
           Backbone.trigger(ocm.Topics.MAP_CHANGED, this.map);
         }, this)
