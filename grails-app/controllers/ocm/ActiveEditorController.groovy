@@ -8,6 +8,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 
 class ActiveEditorController {
+  def sessionFactory
+
   def index() {}
 
   @MessageMapping('/register')
@@ -44,8 +46,13 @@ class ActiveEditorController {
       lastCheckIn < System.currentTimeMillis() - 2000
       mapId == message.mapId
     }
-    editors.each { i ->
-      i.delete()
+
+    if(editors.size()) {
+      editors.each { i ->
+        i.delete()
+      }
+      // Clearing the query cache so the editor count updates quickly.
+      sessionFactory.cache.evictEntityRegion(ActiveEditor)
     }
 
     return [
