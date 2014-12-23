@@ -52,7 +52,12 @@ class ActiveEditorController {
         i.delete()
       }
       // Clearing the query cache so the editor count updates quickly.
-      sessionFactory.cache.evictEntityRegion(ActiveEditor)
+      try {
+        sessionFactory.cache.evictEntityRegion(ActiveEditor)
+      } catch(e) {
+        // Testing environment will not have a sessionFactory.
+        log.warn e
+      }
     }
 
     return [

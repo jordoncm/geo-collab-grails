@@ -1,6 +1,10 @@
 package ocm
 
+import java.lang.Thread
+
 import grails.test.mixin.TestFor
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import spock.lang.Specification
 
 /**
@@ -74,9 +78,36 @@ class ActiveEditorControllerSpec extends Specification {
       def registerResult = controller.register(map.id)
       def editor = ActiveEditor.get(registerResult['id'])
       def intialCheckIn = editor.lastCheckIn
-      // controller.heartbeat(['id': editor.id, 'mapId': map.id])
-    then:
-      editor.lastCheckIn > 0
 
+      // Sleep to allow system clock to progress.
+      Thread.currentThread().sleep(100)
+
+      def heartbeatResult = controller.heartbeat(
+        JsonOutput.toJson([
+          'id': editor.id,
+          'mapId': map.id
+        ]))
+    then:
+      intialCheckIn < editor.lastCheckIn
+  }
+
+  void 'Ensure inactive editors are expired from active map editing.'() {
+    when:
+      def firstRegisterResult = controller.register(map.id)
+
+      // Sleep to allow system clock to progress.
+      Thread.currentThread().sleep(3000)
+
+      def secondRegisterResult = controller.register(map.id)
+      def editor = ActiveEditor.get(secondRegisterResult['id'])
+
+      def heartbeatResult = controller.heartbeat(
+        JsonOutput.toJson([
+          'id': editor.id,
+          'mapId': map.id
+        ]))
+    then:
+      heartbeatResult['editors'] == 1
+      ActiveEditor.get(firstRegisterResult['id']) == null
   }
 }
