@@ -207,6 +207,11 @@ ocm.Router = Backbone.Router.extend({
             }
           }
         }, this));
+
+        this.socket.send(
+          ocm.SocketUrls.REGISTER,
+          {},
+          JSON.stringify(this.map.get('id')));
     }, this));
   },
 
@@ -241,10 +246,12 @@ ocm.Router = Backbone.Router.extend({
           }
           this.editorId = null;
 
-          this.socket.send(
-            ocm.SocketUrls.REGISTER,
-            {},
-            JSON.stringify(this.map.get('id')));
+          if(this.socket.connected) {
+            this.socket.send(
+              ocm.SocketUrls.REGISTER,
+              {},
+              JSON.stringify(this.map.get('id')));
+          }
 
           this.interval = window.setInterval(_.bind(function() {
             this.socket.send(
