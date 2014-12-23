@@ -50,7 +50,8 @@ ocm.SocketUrls = {
  * @enum {number}
  */
 ocm.Topics = {
-  MAP_CHANGED: 0
+  EDITORS: 0,
+  MAP_CHANGED: 1
 };
 
 
@@ -191,6 +192,7 @@ ocm.Router = Backbone.Router.extend({
             var data = JSON.parse(message.body);
             if(this.map && this.map.get('id') == data.map) {
               this.editorId = data.id;
+              Backbone.trigger(ocm.Topics.EDITORS, data.editors);
             }
           }
         }, this));
@@ -202,7 +204,7 @@ ocm.Router = Backbone.Router.extend({
             var data = JSON.parse(message.body);
             if(this.editorId == data.id) {
               if(this.map && this.map.get('id') == data.map) {
-                console.log(data);
+                Backbone.trigger(ocm.Topics.EDITORS, data.editors);
               }
             }
           }

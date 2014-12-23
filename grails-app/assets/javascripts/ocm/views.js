@@ -14,6 +14,42 @@ ocm.views = {};
 
 
 /**
+ * Maintain the active editor count.
+ *
+ * @constructor
+ * @extends {Backbone.View}
+ */
+ocm.views.ActiveEditors = Backbone.View.extend({
+  /**
+   * The jQuery target for the view.
+   *
+   * @type {string}
+   */
+  el: '#active-editors',
+
+  /**
+   * Setup publish/subscribe listeners for the view.
+   */
+  initialize: function() {
+    Backbone.on(ocm.Topics.EDITORS, this.render, this);
+  },
+
+  render: function(count) {
+    switch(count) {
+      case 1:
+        this.$el.html('1 editor');
+        break;
+      default:
+        this.$el.html(count + ' editors');
+        break;
+    }
+    return this;
+  }
+});
+
+
+
+/**
  * The map creation view.
  *
  * @constructor
@@ -105,6 +141,39 @@ ocm.views.MapList = Backbone.View.extend({
       }, this)
     });
 
+    return this;
+  }
+});
+
+
+
+/**
+ * Maintain the map name.
+ *
+ * @constructor
+ * @extends {Backbone.View}
+ */
+ocm.views.MapTitle = Backbone.View.extend({
+  /**
+   * The jQuery target for the view.
+   *
+   * @type {string}
+   */
+  el: '#map-title',
+
+  /**
+   * Setup publish/subscribe listeners for the view.
+   */
+  initialize: function() {
+    Backbone.on(ocm.Topics.MAP_CHANGED, this.changeMap, this);
+  },
+
+  changeMap: function(map) {
+    this.render(map);
+  },
+
+  render: function(map) {
+    this.$el.html(map.get('name'));
     return this;
   }
 });

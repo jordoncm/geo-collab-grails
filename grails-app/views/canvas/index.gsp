@@ -15,6 +15,8 @@
         <div class="navbar-header">
           <a class="navbar-brand no-break-out" href="/ocm/home">geo-collab</a>
         </div>
+        <div class="navbar-text pull-left" id="map-title"></div>
+        <div class="navbar-text pull-right" id="active-editors"></div>
       </div>
     </div>
     <div id="map"></div>
