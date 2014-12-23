@@ -33,7 +33,8 @@ ocm.views.Create = Backbone.View.extend({
    * @type {Object.<string, string>}
    */
   events: {
-    'click button': 'createMap'
+    'click button': 'createMap',
+    'submit form': 'createMap'
   },
 
   /**
@@ -55,7 +56,9 @@ ocm.views.Create = Backbone.View.extend({
         window.location = '/ocm/canvas/#/' + map.get('id') + '/';
       }
     });
-  },
+
+    return false;
+  }
 });
 
 
