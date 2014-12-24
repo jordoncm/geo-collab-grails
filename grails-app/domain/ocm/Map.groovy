@@ -20,7 +20,7 @@ class Map {
     id generator: 'assigned'
     name defaultValue: ''
     description defaultValue: ''
-    // Make sure child objects don not lazy load in order for JSON controllers
+    // Make sure child objects do not lazy load in order for JSON controllers
     // to not be missing fields in result sets.
     features lazy: false, cascade: 'all-delete-orphan'
   }
